@@ -18,15 +18,15 @@ app.get('/', (req, res) => {
 });
 
 
-app.get('people/:id',function(req,res){
+app.get('/layout/:id', function (req, res) {
     let data = {
         id: req.params.id,
         name: 'ayoub',
         age: 20,
         job: 'developer',
-        friends: ['tayeb','yusuf','ali']
+        friends: ['tayeb', 'yusuf', 'ali']
     }
-    res.render('person',data);
+    res.render('layout', data);
 });
 
 

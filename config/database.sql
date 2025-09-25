@@ -13,6 +13,8 @@ create table budgets(
     month_year VARCHAR(7), -- "2025-09"
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+npx sequelize-cli model:generate --name Transaction --attributes user_id:integer,category_id:integer,amount:decimal,type:enum:{income,expense},transaction_date:date,description:text
+
 
 create table categories(
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -42,3 +44,4 @@ create table savings(
     target_date DATE,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
