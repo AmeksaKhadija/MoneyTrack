@@ -10,17 +10,20 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Budget.belongsTo(models.User, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+      Budget.belongsTo(models.categories, { foreignKey: 'budget_id', onDelete: 'CASCADE' });
     }
   }
   Budget.init({
-    user_id: DataTypes.INTEGER,
-    name: DataTypes.STRING,
-    total_amount: DataTypes.DECIMAL,
-    month_year: DataTypes.STRING
+    user_id: { type: DataTypes.INTEGER, allowNull: false },
+    category_id: { type: DataTypes.INTEGER, allowNull: true }, 
+    name: { type: DataTypes.STRING, allowNull: false },
+    total_amount: { type: DataTypes.DECIMAL(10,2), allowNull: false },
+    month_year: { type: DataTypes.STRING } 
   }, {
     sequelize,
     modelName: 'Budget',
+    tableName: 'budgets'
   });
   return Budget;
 };

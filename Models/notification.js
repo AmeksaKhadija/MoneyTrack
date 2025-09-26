@@ -10,17 +10,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Notification.belongsTo(models.User, { foreignKey: 'user_id', as: 'user', onDelete: 'CASCADE' });
     }
   }
   Notification.init({
-    message: DataTypes.STRING,
-    userId: DataTypes.INTEGER,
-    date: DataTypes.DATE,
-    seen: DataTypes.BOOLEAN
+    message: { type: DataTypes.STRING, allowNull: false },
+    user_id: { type: DataTypes.INTEGER, allowNull: false },
+    date: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+    seen: { type: DataTypes.BOOLEAN, defaultValue: false }
   }, {
     sequelize,
     modelName: 'Notification',
+    tableName: 'notifications'
   });
   return Notification;
 };

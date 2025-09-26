@@ -10,7 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Category.belongsTo(models.User, { foreignKey: 'user_id', as: 'user', onDelete: 'CASCADE' });
+      Category.hasMany(models.Transaction, { foreignKey: 'category_id', as: 'transactions', onDelete: 'SET NULL' });
+      Category.hasMany(models.Budget, { foreignKey: 'category_id', as: 'budgets', onDelete: 'SET NULL' });
     }
   }
   Category.init({
