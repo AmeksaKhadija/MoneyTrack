@@ -1,0 +1,204 @@
+<% layout('layout') -%>
+
+<div class="bg-light min-vh-100">
+    <main class="py-4">
+        <div class="container">
+             Converting dashboard header to Bootstrap 
+            <div class="mb-5">
+                <h1 class="display-5 fw-bold text-primary-custom mb-2">
+                    Tableau de bord
+                </h1>
+                <p class="lead text-muted">
+                    Bienvenue <%= user.name %>, voici un aperçu de vos finances
+                </p>
+            </div>
+
+             Converting stats cards to Bootstrap grid 
+            <div class="row g-4 mb-5">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card dashboard-card stat-card success border-0 h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="card-title h6 text-white mb-0">Solde actuel</h3>
+                                <div class="bg-white bg-opacity-25 p-2 rounded">💰</div>
+                            </div>
+                            <p class="h3 fw-bold text-white mb-1">2 450,00 €</p>
+                            <p class="small text-white-50 mb-0">+5.2% ce mois</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card dashboard-card stat-card danger border-0 h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="card-title h6 text-white mb-0">Dépenses ce mois</h3>
+                                <div class="bg-white bg-opacity-25 p-2 rounded">📊</div>
+                            </div>
+                            <p class="h3 fw-bold text-white mb-1">1 280,50 €</p>
+                            <p class="small text-white-50 mb-0">-2.1% vs mois dernier</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card dashboard-card stat-card border-0 h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="card-title h6 text-white mb-0">Objectif d'épargne</h3>
+                                <div class="bg-white bg-opacity-25 p-2 rounded">🎯</div>
+                            </div>
+                            <p class="h3 fw-bold text-white mb-1">75%</p>
+                            <p class="small text-white-50 mb-0">750€ / 1000€</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card dashboard-card stat-card warning border-0 h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="card-title h6 text-white mb-0">Budget restant</h3>
+                                <div class="bg-white bg-opacity-25 p-2 rounded">💳</div>
+                            </div>
+                            <p class="h3 fw-bold text-white mb-1">719,50 €</p>
+                            <p class="small text-white-50 mb-0">36% du budget mensuel</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             Converting main section to Bootstrap grid 
+            <div class="row g-4 mb-5">
+                <div class="col-lg-8">
+                    <div class="card dashboard-card border-0 h-100">
+                        <div class="card-body">
+                            <h3 class="card-title h5 fw-semibold text-primary-custom mb-4">
+                                Évolution des dépenses
+                            </h3>
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted" style="height: 300px;">
+                                <div class="text-center">
+                                    <div class="display-1 mb-3">📈</div>
+                                    <p class="mb-1">Graphique des dépenses</p>
+                                    <p class="small">(Chart.js sera intégré ici)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card dashboard-card border-0 h-100">
+                        <div class="card-body">
+                            <h3 class="card-title h5 fw-semibold text-primary-custom mb-4">
+                                Actions rapides
+                            </h3>
+                            <div class="d-grid gap-3">
+                                <button class="btn btn-primary d-flex align-items-center justify-content-start gap-3">
+                                    <span>➕</span> Ajouter une transaction
+                                </button>
+                                <button class="btn btn-outline-primary d-flex align-items-center justify-content-start gap-3">
+                                    <span>📊</span> Créer un budget
+                                </button>
+                                <button class="btn btn-outline-primary d-flex align-items-center justify-content-start gap-3">
+                                    <span>🎯</span> Définir un objectif
+                                </button>
+                                <button class="btn btn-outline-primary d-flex align-items-center justify-content-start gap-3">
+                                    <span>📄</span> Générer un rapport
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             Converting transactions table to Bootstrap 
+            <div class="card dashboard-card border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="card-title h5 fw-semibold text-primary-custom mb-0">
+                            Transactions récentes
+                        </h3>
+                        <a href="#" class="btn btn-outline-primary">Voir tout</a>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Catégorie</th>
+                                    <th scope="col" class="text-end">Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>25/01/2025</td>
+                                    <td>Courses Carrefour</td>
+                                    <td>
+                                        <span class="badge bg-success-subtle text-success">
+                                            Alimentation
+                                        </span>
+                                    </td>
+                                    <td class="text-end text-danger fw-semibold">-85,40 €</td>
+                                </tr>
+                                <tr>
+                                    <td>24/01/2025</td>
+                                    <td>Salaire janvier</td>
+                                    <td>
+                                        <span class="badge bg-primary-subtle text-primary">
+                                            Revenus
+                                        </span>
+                                    </td>
+                                    <td class="text-end text-success fw-semibold">+2500,00 €</td>
+                                </tr>
+                                <tr>
+                                    <td>23/01/2025</td>
+                                    <td>Essence Total</td>
+                                    <td>
+                                        <span class="badge bg-warning-subtle text-warning">
+                                            Transport
+                                        </span>
+                                    </td>
+                                    <td class="text-end text-danger fw-semibold">-65,20 €</td>
+                                </tr>
+                                <tr>
+                                    <td>22/01/2025</td>
+                                    <td>Netflix</td>
+                                    <td>
+                                        <span class="badge bg-info-subtle text-info">
+                                            Loisirs
+                                        </span>
+                                    </td>
+                                    <td class="text-end text-danger fw-semibold">-15,99 €</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // Animation des cartes au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.dashboard-card');
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('fade-in-up');
+            }, index * 100);
+        });
+    });
+
+    // Simulation de données en temps réel
+    function updateStats() {
+        // Ici on pourrait faire des appels AJAX pour mettre à jour les statistiques
+        console.log('Mise à jour des statistiques...');
+    }
+
+    // Mettre à jour les stats toutes les 30 secondes
+    setInterval(updateStats, 30000);
+</script>

@@ -1,0 +1,211 @@
+<div
+  class="form-container d-flex align-items-center justify-content-center min-vh-100 py-5"
+>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="card form-card border-0 shadow-lg">
+          <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-4">
+              <a href="/" class="text-decoration-none">
+                <h2 class="fw-bold text-primary mb-3">MoneyTrack</h2>
+              </a>
+              <h1 class="h3 fw-semibold text-primary-custom mb-2">
+                Créer votre compte
+              </h1>
+              <p class="text-muted">
+                Commencez votre parcours vers une meilleure gestion financière
+              </p>
+            </div>
+
+            <% if (error) { %>
+            <div class="alert alert-danger" role="alert"><%= error %></div>
+            <% } %>
+
+            <form action="/register" method="POST" id="registerForm">
+              <div class="mb-3">
+                <label for="name" class="form-label fw-medium"
+                  >Nom complet</label
+                >
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  class="form-control form-input"
+                  placeholder="Entrez votre nom complet"
+                  required
+                  autocomplete="name"
+                />
+              </div>
+
+              <div class="mb-3">
+                <label for="email" class="form-label fw-medium"
+                  >Adresse email</label
+                >
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="form-control form-input"
+                  placeholder="votre@email.com"
+                  required
+                  autocomplete="email"
+                />
+              </div>
+
+              <div class="mb-3">
+                <label for="password" class="form-label fw-medium"
+                  >Mot de passe</label
+                >
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  class="form-control form-input"
+                  placeholder="Créez un mot de passe sécurisé"
+                  required
+                  autocomplete="new-password"
+                  minlength="6"
+                />
+                <div class="form-text">Minimum 6 caractères</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="confirmPassword" class="form-label fw-medium"
+                  >Confirmer le mot de passe</label
+                >
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  class="form-control form-input"
+                  placeholder="Confirmez votre mot de passe"
+                  required
+                  autocomplete="new-password"
+                />
+              </div>
+
+              <div class="mb-4">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="terms"
+                    required
+                  />
+                  <label class="form-check-label text-muted small" for="terms">
+                    J'accepte les
+                    <a href="#" class="text-primary text-decoration-none"
+                      >conditions d'utilisation</a
+                    >
+                    et la
+                    <a href="#" class="text-primary text-decoration-none"
+                      >politique de confidentialité</a
+                    >
+                  </label>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg w-100 mb-3"
+                id="submitBtn"
+              >
+                Créer mon compte
+              </button>
+            </form>
+
+            <div class="text-center border-top pt-3">
+              <p class="text-muted mb-0">
+                Vous avez déjà un compte ?
+                <a
+                  href="/login"
+                  class="text-primary text-decoration-none fw-medium"
+                  >Se connecter</a
+                >
+              </p>
+            </div>
+
+            Avantages de l'inscription
+            <div class="mt-4 pt-4 border-top">
+              <h3 class="h6 fw-semibold text-primary-custom mb-3 text-center">
+                Pourquoi choisir MoneyTrack ?
+              </h3>
+              <ul class="list-unstyled mb-0">
+                <li class="d-flex align-items-center mb-2 small text-muted">
+                  <span class="text-success fw-bold me-2">✓</span>
+                  Gratuit et sans engagement
+                </li>
+                <li class="d-flex align-items-center mb-2 small text-muted">
+                  <span class="text-success fw-bold me-2">✓</span>
+                  Sécurité bancaire garantie
+                </li>
+                <li class="d-flex align-items-center mb-2 small text-muted">
+                  <span class="text-success fw-bold me-2">✓</span>
+                  Interface intuitive et moderne
+                </li>
+                <li class="d-flex align-items-center small text-muted">
+                  <span class="text-success fw-bold me-2">✓</span>
+                  Support client réactif
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Validation côté client
+  const form = document.getElementById("registerForm");
+  const password = document.getElementById("password");
+  const confirmPassword = document.getElementById("confirmPassword");
+  const submitBtn = document.getElementById("submitBtn");
+
+  // Vérification des mots de passe
+  function validatePasswords() {
+    if (password.value !== confirmPassword.value) {
+      confirmPassword.setCustomValidity(
+        "Les mots de passe ne correspondent pas"
+      );
+      return false;
+    } else {
+      confirmPassword.setCustomValidity("");
+      return true;
+    }
+  }
+
+  confirmPassword.addEventListener("input", validatePasswords);
+  password.addEventListener("input", validatePasswords);
+
+  // Animation du bouton lors de la soumission
+  form.addEventListener("submit", function (e) {
+    if (form.checkValidity() && validatePasswords()) {
+      submitBtn.innerHTML = "Création en cours...";
+      submitBtn.disabled = true;
+    }
+  });
+
+  // Validation en temps réel
+  const inputs = document.querySelectorAll(".form-input");
+  inputs.forEach((input) => {
+    input.addEventListener("blur", function () {
+      if (this.checkValidity()) {
+        this.style.borderColor = "var(--success-color)";
+      } else {
+        this.style.borderColor = "var(--danger-color)";
+      }
+    });
+
+    input.addEventListener("focus", function () {
+      this.style.borderColor = "var(--accent-color)";
+    });
+  });
+
+  // Animation d'entrée
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelector(".form-card").classList.add("fade-in-up");
+  });
+</script>
