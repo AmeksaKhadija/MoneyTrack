@@ -1,148 +1,186 @@
-const express = require("express")
-const path = require("path")
-const session = require("express-session")
-// const bcrypt = require("bcrypt")
-const expressLayouts = require("express-ejs-layouts")
-const app = express()
-const PORT = 4000
+const express = require("express");
+const path = require("path");
+const session = require("express-session");
+const bcrypt = require("bcrypt"); // Uncomment this
+const expressLayouts = require("express-ejs-layouts");
 
-app.set("view engine", "ejs")
-app.set("views", path.join(__dirname, "views"))
+// Import your models and controller
+const { User } = require("./models"); // Make sure path is correct
+const authController = require("./Controllers/authController");
 
-app.use(expressLayouts)
-app.set("layout", "layout")
+const app = express();
+const PORT = process.env.PORT || 4000;
 
-const publicPath = path.join(__dirname, "./public")
-app.use(express.static(publicPath))
+// EJS Configuration
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
+// Layouts Configuration
+app.use(expressLayouts);
+app.set("layout", "layout");
 
+// Static Files
+const publicPath = path.join(__dirname, "./public");
+app.use(express.static(publicPath));
+
+// Body Parsing Middleware
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Session Configuration
 app.use(
   session({
-    secret: "moneytrack-secret-key",
+    secret: process.env.SESSION_SECRET || "moneytrack-secret-key-change-in-production",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false },
-  }),
-)
+    cookie: {
+      secure: false, // Set to true if using HTTPS
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    },
+  })
+);
 
-const requireAuth = (req, res, next) => {
-  if (req.session.userId) {
-    next()
-  } else {
-    res.redirect("/login")
+// Authentication Middleware
+const requireAuth = async (req, res, next) => {
+  if (!req.session.userId) {
+    return res.redirect("/login");
   }
-}
 
-const users = []
-let nextUserId = 1
+  try {
+    // Verify user still exists in database
+    const user = await User.findByPk(req.session.userId);
+    if (!user) {
+      // User deleted, clear session
+      req.session.destroy();
+      return res.redirect("/login");
+    }
 
-app.get("/", (req, res) => {
-  const user = req.session.userId ? users.find(u => u.id === req.session.userId) : null;
-  res.render("index", { title: "Accueil", user });
+    // Add user to request object for easy access
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error("Auth middleware error:", error);
+    res.redirect("/login");
+  }
+};
+
+// Guest middleware (redirect to dashboard if logged in)
+const requireGuest = (req, res, next) => {
+  if (req.session.userId) {
+    return res.redirect("/dashboard");
+  }
+  next();
+};
+
+// Routes
+
+// Home page - Updated to use Sequelize
+app.get("/", async (req, res) => {
+  let user = null;
+
+  if (req.session.userId) {
+    try {
+      user = await User.findByPk(req.session.userId, {
+        attributes: ['id', 'username', 'email'] // Don't send password
+      });
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  }
+
+  res.render("index", {
+    title: "Accueil",
+    user
+  });
 });
 
-app.get("/register", (req, res) => {
-  // const user = req.session.userId ? users.find(u => u.id === req.session.userId) : null;
-  res.render("register", { title: "Register", error: null })
-})
+// Authentication Routes using controller
+app.get("/register", requireGuest, (req, res) => {
+  res.render("register", {
+    title: "Inscription - MoneyTrack",
+    error: null,
+    user: null
+  });
+});
+app.post("/register", requireGuest, authController.register);
 
-app.post("/register", async (req, res) => {
-  const { name, email, password, confirmPassword } = req.body
+app.get("/login", requireGuest, authController.showLogin);
+app.post("/login", requireGuest, authController.login);
 
-  if (!name || !email || !password || !confirmPassword) {
-    return res.render("register", { error: "Tous les champs sont requis" })
-  }
+// Demo login route
+app.post("/demo-login", requireGuest, authController.demoLogin);
 
-  if (password !== confirmPassword) {
-    return res.render("register", { error: "Les mots de passe ne correspondent pas" })
-  }
+// Logout
+app.post("/logout", authController.logout);
 
-  if (users.find((u) => u.email === email)) {
-    return res.render("register", { error: "Un compte avec cet email existe déjà" })
-  }
-
+// Protected Routes
+app.get("/dashboard", requireAuth, async (req, res) => {
   try {
-    // Hacher le mot de passe
-    // const hashedPassword = await bcrypt.hash(password, 10)
+    const user = await User.findByPk(req.session.userId, {
+      attributes: ['id', 'username', 'email']
+    });
 
-    // Créer le nouvel utilisateur
-    const newUser = {
-      id: nextUserId++,
-      name,
-      email,
-      password: hashedPassword,
-      createdAt: new Date(),
-    }
-
-    users.push(newUser)
-
-    req.session.userId = newUser.id
-
-    res.redirect("/dashboard")
+    res.render("dashboard", {
+      title: "Tableau de bord",
+      user: user
+    });
   } catch (error) {
-    res.render("register", { error: "Erreur lors de la création du compte" })
+    console.error("Dashboard error:", error);
+    res.redirect("/login");
   }
-})
+});
 
-app.get("/login", (req, res) => {
-  res.render("login", { title: "Login", error: null })
-})
-
-// Route de connexion - POST
-app.post("/login", async (req, res) => {
-  const { email, password } = req.body
-
-  if (!email || !password) {
-    return res.render("login", { error: "Email et mot de passe requis" })
-  }
-
-  // Trouver l'utilisateur
-  const user = users.find((u) => u.email === email)
-
-  if (!user) {
-    return res.render("login", { error: "Email ou mot de passe incorrect" })
-  }
-
+// API Routes
+app.get("/api/user", requireAuth, async (req, res) => {
   try {
-    // Vérifier le mot de passe
-    // const isValidPassword = await bcrypt.compare(password, user.password)
-
-    if (!isValidPassword) {
-      return res.render("login", { error: "Email ou mot de passe incorrect" })
-    }
-
-    // Connecter l'utilisateur
-    req.session.userId = user.id
-
-    res.redirect("/dashboard")
+    const user = await User.findByPk(req.session.userId, {
+      attributes: ['id', 'username', 'email']
+    });
+    res.json(user);
   } catch (error) {
-    res.render("login", { error: "Erreur lors de la connexion" })
+    console.error("API user error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-})
+});
 
-// Route de déconnexion
-app.post("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Erreur lors de la déconnexion:", err)
-    }
-    res.redirect("/")
-  })
-})
+// Health check
+app.get("/health", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
+});
 
-// Route du tableau de bord (protégée)
-app.get("/dashboard", requireAuth, (req, res) => {
-  const user = users.find((u) => u.id === req.session.userId)
-  res.render("dashboard", { user })
-})
-
-// Gestion des erreurs 404
+// 404 Handler
 app.use((req, res) => {
-  res.status(404).render("404")
-})
+  res.status(404).render("404", {
+    title: "Page non trouvée"
+  });
+});
 
-app.listen(PORT, () => {
-  console.log(`MoneyTrack server is running on http://localhost:${PORT}`)
-})
+// Error Handler
+app.use((error, req, res, next) => {
+  console.error("Server error:", error);
+  res.status(500).render("500", {
+    title: "Erreur serveur",
+    error: process.env.NODE_ENV === 'development' ? error : null
+  });
+});
+
+// Start Server
+app.listen(PORT, async () => {
+  try {
+    // Test database connection
+    await User.sequelize.authenticate();
+    console.log('Database connection established successfully.');
+
+    // Sync models (be careful with this in production)
+    if (process.env.NODE_ENV !== 'production') {
+      await User.sequelize.sync({ alter: true });
+      console.log('Database models synchronized.');
+    }
+
+    console.log(`MoneyTrack server is running on http://localhost:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+    process.exit(1);
+  }
+});

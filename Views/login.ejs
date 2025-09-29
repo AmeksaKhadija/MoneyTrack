@@ -8,11 +8,19 @@
                             <a href="/" class="text-decoration-none">
                                 <h2 class="fw-bold text-primary mb-3">MoneyTrack</h2>
                             </a>
-                            <h1 class="h3 fw-semibold text-primary-custom mb-2">Bon retour !</h1>
+                            <h1 class="h3 fw-semibold text-primary mb-2">Bon retour !</h1>
                             <p class="text-muted">Connectez-vous à votre compte pour accéder à votre tableau de bord</p>
                         </div>
 
-                        <% if (error) { %>
+                        <!-- Success message -->
+                        <% if (typeof success !== 'undefined' && success) { %>
+                            <div class="alert alert-success" role="alert">
+                                <%= success %>
+                            </div>
+                        <% } %>
+
+                        <!-- Error message -->
+                        <% if (typeof error !== 'undefined' && error) { %>
                             <div class="alert alert-danger" role="alert">
                                 <%= error %>
                             </div>
@@ -70,9 +78,9 @@
                             </p>
                         </div>
 
-                         <!-- CHANGE> Converting demo credentials section to Bootstrap -->
+                        <!-- Demo credentials section -->
                         <div class="border-top pt-4 mb-4">
-                            <h3 class="h6 fw-semibold text-primary-custom mb-3 text-center">
+                            <h3 class="h6 fw-semibold text-primary mb-3 text-center">
                                 Accès rapide
                             </h3>
                             <p class="small text-muted text-center mb-3">
@@ -89,11 +97,17 @@
                             <button type="button" class="btn btn-outline-primary w-100 mt-3" onclick="fillDemoCredentials()">
                                 Utiliser les identifiants de démonstration
                             </button>
+
+                            <form action="/demo-login" method="POST" class="mt-2">
+                                <button type="submit" class="btn btn-info w-100">
+                                    Connexion directe (Démo)
+                                </button>
+                            </form>
                         </div>
 
-                         <!-- CHANGE> Converting benefits section to Bootstrap -->
+                        <!-- Benefits section -->
                         <div class="border-top pt-4">
-                            <h3 class="h6 fw-semibold text-primary-custom mb-3 text-center">
+                            <h3 class="h6 fw-semibold text-primary mb-3 text-center">
                                 Votre tableau de bord vous attend
                             </h3>
                             <ul class="list-unstyled mb-0">
@@ -122,12 +136,12 @@
     </div>
 </div>
 
- <!-- CHANGE> Converting modal to Bootstrap modal -->
+<!-- Forgot Password Modal -->
 <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-primary-custom" id="forgotPasswordModalLabel">Réinitialiser le mot de passe</h5>
+                <h5 class="modal-title text-primary" id="forgotPasswordModalLabel">Réinitialiser le mot de passe</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -149,104 +163,76 @@
     </div>
 </div>
 
-    <script>
-        // Animation du bouton lors de la soumission
-        const form = document.getElementById('loginForm');
-        const submitBtn = document.getElementById('submitBtn');
+<script>
+    // Animation du bouton lors de la soumission
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
 
-        form.addEventListener('submit', function(e) {
-            if (form.checkValidity()) {
-                submitBtn.innerHTML = 'Connexion en cours...';
-                submitBtn.disabled = true;
+    form.addEventListener('submit', function(e) {
+        if (form.checkValidity()) {
+            submitBtn.innerHTML = 'Connexion en cours...';
+            submitBtn.disabled = true;
+        }
+    });
+
+    // Validation en temps réel
+    const inputs = document.querySelectorAll('.form-input');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.checkValidity()) {
+                this.style.borderColor = 'var(--success-color)';
+            } else {
+                this.style.borderColor = 'var(--danger-color)';
             }
         });
 
-        // Validation en temps réel
-        const inputs = document.querySelectorAll('.form-input');
+        input.addEventListener('focus', function() {
+            this.style.borderColor = 'var(--accent-color)';
+        });
+    });
+
+    // Fonctions pour les identifiants de démonstration
+    function fillDemoCredentials() {
+        document.getElementById('email').value = 'demo@moneytrack.com';
+        document.getElementById('password').value = 'demo123';
+        
+        // Animation visuelle
+        const inputs = [document.getElementById('email'), document.getElementById('password')];
         inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                if (this.checkValidity()) {
-                    this.style.borderColor = 'var(--success-color)';
-                } else {
-                    this.style.borderColor = 'var(--danger-color)';
-                }
-            });
-
-            input.addEventListener('focus', function() {
-                this.style.borderColor = 'var(--accent-color)';
-            });
+            input.style.borderColor = 'var(--success-color)';
+            input.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                input.style.transform = 'scale(1)';
+            }, 200);
         });
+    }
 
-        // Fonctions pour les identifiants de démonstration
-        function fillDemoCredentials() {
-            document.getElementById('email').value = 'demo@moneytrack.com';
-            document.getElementById('password').value = 'demo123';
-            
-            // Animation visuelle
-            const inputs = [document.getElementById('email'), document.getElementById('password')];
-            inputs.forEach(input => {
-                input.style.borderColor = 'var(--success-color)';
-                input.style.transform = 'scale(1.02)';
+    // Animation d'entrée
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('.form-card').classList.add('fade-in-up');
+        
+        // Auto-hide success message after 5 seconds
+        const successAlert = document.querySelector('.alert-success');
+        if (successAlert) {
+            setTimeout(() => {
+                successAlert.style.opacity = '0';
                 setTimeout(() => {
-                    input.style.transform = 'scale(1)';
-                }, 200);
-            });
+                    successAlert.style.display = 'none';
+                }, 300);
+            }, 5000);
         }
+    });
 
-        // Gestion du modal mot de passe oublié
-        function showForgotPassword() {
-            const modal = document.getElementById('forgotPasswordModal');
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function hideForgotPassword() {
-            const modal = document.getElementById('forgotPasswordModal');
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // Fermer le modal en cliquant à l'extérieur
-        document.getElementById('forgotPasswordModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hideForgotPassword();
-            }
-        });
-
-        // Gestion du formulaire de réinitialisation
-        document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('resetEmail').value;
-            
-            // Simulation d'envoi d'email
-            alert(`Un email de réinitialisation a été envoyé à ${email}`);
-            hideForgotPassword();
-        });
-
-        // Animation d'entrée
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('.form-card').classList.add('fade-in-up');
-        });
-
-        // Gestion des touches clavier
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                hideForgotPassword();
-            }
-        });
-
-        // Gestion du formulaire de réinitialisation avec Bootstrap modal
-        document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('resetEmail').value;
-            
-            // Simulation d'envoi d'email
-            alert(`Un email de réinitialisation a été envoyé à ${email}`);
-            
-            // Fermer le modal Bootstrap
-            const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
-            modal.hide();
-        });
-    </script>
-</body>
-</html>
+    // Gestion du formulaire de réinitialisation avec Bootstrap modal
+    document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('resetEmail').value;
+        
+        // Simulation d'envoi d'email
+        alert(`Un email de réinitialisation a été envoyé à ${email}`);
+        
+        // Fermer le modal Bootstrap
+        const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+        modal.hide();
+    });
+</script>

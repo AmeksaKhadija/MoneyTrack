@@ -11,15 +11,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Budget.belongsTo(models.User, { foreignKey: 'user_id', onDelete: 'CASCADE' });
-      Budget.belongsTo(models.categories, { foreignKey: 'budget_id', onDelete: 'CASCADE' });
+      Budget.belongsTo(models.Category, { foreignKey: 'category_id', onDelete: 'CASCADE' });
     }
   }
   Budget.init({
     user_id: { type: DataTypes.INTEGER, allowNull: false },
-    category_id: { type: DataTypes.INTEGER, allowNull: true }, 
+    category_id: { type: DataTypes.INTEGER, allowNull: true },
     name: { type: DataTypes.STRING, allowNull: false },
-    total_amount: { type: DataTypes.DECIMAL(10,2), allowNull: false },
-    month_year: { type: DataTypes.STRING } 
+    total_amount: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
+    month_year: { type: DataTypes.STRING }
   }, {
     sequelize,
     modelName: 'Budget',
