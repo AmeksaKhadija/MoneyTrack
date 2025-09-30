@@ -1,0 +1,156 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Modifier la Transaction</h4>
+            <a href="/transactions" class="btn btn-sm btn-outline-secondary">
+              ← Retour
+            </a>
+          </div>
+        </div>
+        <div class="card-body p-4">
+          <% if (error) { %>
+            <div class="alert alert-danger" role="alert">
+              <%= error %>
+            </div>
+          <% } %>
+
+          <form action="/transactions/<%= transaction.id %>/update" method="POST">
+            <div class="mb-4">
+              <label class="form-label fw-medium">
+                Type de Transaction <span class="text-danger">*</span>
+              </label>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <input type="radio" class="btn-check" name="type" id="income" value="income" 
+                         <%= transaction.type === 'income' ? 'checked' : '' %> onchange="filterCategories()">
+                  <label class="btn btn-outline-success w-100 py-3" for="income">
+                    <div class="fs-3 mb-2">📥</div>
+                    <div class="fw-semibold">Revenu</div>
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <input type="radio" class="btn-check" name="type" id="expense" value="expense"
+                         <%= transaction.type === 'expense' ? 'checked' : '' %> onchange="filterCategories()">
+                  <label class="btn btn-outline-danger w-100 py-3" for="expense">
+                    <div class="fs-3 mb-2">📤</div>
+                    <div class="fw-semibold">Dépense</div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="description" class="form-label fw-medium">
+                Description <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                class="form-control form-control-lg" 
+                id="description" 
+                name="description"
+                value="<%= transaction.description %>"
+                required
+                autofocus
+              >
+            </div>
+
+            <div class="mb-4">
+              <label for="amount" class="form-label fw-medium">
+                Montant (€) <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="number" 
+                class="form-control form-control-lg" 
+                id="amount" 
+                name="amount"
+                value="<%= transaction.amount %>"
+                step="0.01"
+                min="0.01"
+                required
+              >
+            </div>
+
+            <div class="mb-4">
+              <label for="category_id" class="form-label fw-medium">
+                Catégorie
+              </label>
+              <select class="form-select form-select-lg" id="category_id" name="category_id">
+                <option value="">Sans catégorie</option>
+                <% categories.forEach(category => { %>
+                  <option value="<%= category.id %>" 
+                          data-type="<%= category.type %>"
+                          <%= transaction.category_id == category.id ? 'selected' : '' %>>
+                    <%= category.icon || '📁' %> <%= category.category_name %>
+                  </option>
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label for="transaction_date" class="form-label fw-medium">
+                Date de la Transaction <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="date" 
+                class="form-control" 
+                id="transaction_date" 
+                name="transaction_date"
+                value="<%= transaction.transaction_date %>"
+                required
+              >
+            </div>
+
+            <div class="mb-4">
+              <label for="notes" class="form-label fw-medium">
+                Notes (optionnel)
+              </label>
+              <textarea 
+                class="form-control" 
+                id="notes" 
+                name="notes"
+                rows="3"
+              ><%= transaction.notes || '' %></textarea>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">
+                Enregistrer les Modifications
+              </button>
+              <a href="/transactions" class="btn btn-outline-secondary">
+                Annuler
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function filterCategories() {
+    const selectedType = document.querySelector('input[name="type"]:checked').value;
+    const categorySelect = document.getElementById('category_id');
+    const options = categorySelect.querySelectorAll('option[data-type]');
+    
+    options.forEach(option => {
+      if (option.dataset.type === selectedType) {
+        option.style.display = '';
+      } else {
+        option.style.display = 'none';
+      }
+    });
+    
+    if (categorySelect.value) {
+      const selectedOption = categorySelect.querySelector(`option[value="${categorySelect.value}"]`);
+      if (selectedOption && selectedOption.dataset.type !== selectedType) {
+        categorySelect.value = '';
+      }
+    }
+  }
+  
+  document.addEventListener('DOMContentLoaded', filterCategories);
+</script>

@@ -3,8 +3,8 @@ const path = require("path");
 const session = require("express-session");
 const bcrypt = require("bcrypt"); // Uncomment this
 const expressLayouts = require("express-ejs-layouts");
-
-// Import your models and controller
+const categoryController = require("./Controllers/categoryController");
+const transactionController = require("./Controllers/transactionController");
 const { User } = require("./models"); // Make sure path is correct
 const authController = require("./Controllers/authController");
 
@@ -129,6 +129,32 @@ app.get("/dashboard", requireAuth, async (req, res) => {
     res.redirect("/login");
   }
 });
+
+// categories Routes (toutes protégées)
+app.get("/categories", requireAuth, categoryController.index);
+app.get("/categories/create", requireAuth, categoryController.create);
+app.post("/categories", requireAuth, categoryController.store);
+app.get("/categories/:id/edit", requireAuth, categoryController.edit);
+app.post("/categories/:id/update", requireAuth, categoryController.update);
+app.post("/categories/:id/delete", requireAuth, categoryController.destroy);
+
+// Routes Transactions (toutes protégées)
+app.get("/transactions", requireAuth, transactionController.index);
+app.get("/transactions/create", requireAuth, transactionController.create);
+app.post("/transactions", requireAuth, transactionController.store);
+app.get("/transactions/:id/edit", requireAuth, transactionController.edit);
+app.post("/transactions/:id/update", requireAuth, transactionController.update);
+app.post("/transactions/:id/delete", requireAuth, transactionController.destroy);
+
+
+
+
+
+
+
+
+
+
 
 // API Routes
 app.get("/api/user", requireAuth, async (req, res) => {
