@@ -7,6 +7,7 @@ const categoryController = require("./Controllers/categoryController");
 const transactionController = require("./Controllers/transactionController");
 const { User } = require("./models"); // Make sure path is correct
 const authController = require("./Controllers/authController");
+const budgetController = require("./Controllers/budgetController");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -95,13 +96,7 @@ app.get("/", async (req, res) => {
 });
 
 // Authentication Routes using controller
-app.get("/register", requireGuest, (req, res) => {
-  res.render("register", {
-    title: "Inscription - MoneyTrack",
-    error: null,
-    user: null
-  });
-});
+app.get("/register", requireGuest, authController.showRegister);
 app.post("/register", requireGuest, authController.register);
 
 app.get("/login", requireGuest, authController.showLogin);
@@ -109,26 +104,13 @@ app.post("/login", requireGuest, authController.login);
 
 // Demo login route
 app.post("/demo-login", requireGuest, authController.demoLogin);
-
-// Logout
 app.post("/logout", authController.logout);
 
-// Protected Routes
-app.get("/dashboard", requireAuth, async (req, res) => {
-  try {
-    const user = await User.findByPk(req.session.userId, {
-      attributes: ['id', 'username', 'email']
-    });
-
-    res.render("dashboard", {
-      title: "Tableau de bord",
-      user: user
-    });
-  } catch (error) {
-    console.error("Dashboard error:", error);
-    res.redirect("/login");
-  }
-});
+//  budget 
+app.get("/budget/setup", requireAuth, budgetController.setup);
+app.post("/budget/setup", requireAuth, budgetController.store);
+app.get("/budget/edit", requireAuth, budgetController.edit);
+app.post("/budget/update", requireAuth, budgetController.update);
 
 // categories Routes (toutes protégées)
 app.get("/categories", requireAuth, categoryController.index);
@@ -147,14 +129,22 @@ app.post("/transactions/:id/update", requireAuth, transactionController.update);
 app.post("/transactions/:id/delete", requireAuth, transactionController.destroy);
 
 
+// Protected Routes
+app.get("/dashboard", requireAuth, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.session.userId, {
+      attributes: ['id', 'username', 'email']
+    });
 
-
-
-
-
-
-
-
+    res.render("dashboard", {
+      title: "Tableau de bord",
+      user: user
+    });
+  } catch (error) {
+    console.error("Dashboard error:", error);
+    res.redirect("/login");
+  }
+});
 
 // API Routes
 app.get("/api/user", requireAuth, async (req, res) => {

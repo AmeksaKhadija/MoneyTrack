@@ -1,8 +1,9 @@
 const { Transaction, Category } = require('../models');
+const budgetController = require('./budgetController');
 const { Op } = require('sequelize');
 
 const transactionController = {
-  // Afficher toutes les transactions
+  // Afficher toutes les transactions avec vraies statistiques
   index: async (req, res) => {
     try {
       const transactions = await Transaction.findAll({
@@ -15,25 +16,13 @@ const transactionController = {
         order: [['transaction_date', 'DESC'], ['created_at', 'DESC']]
       });
 
-      // Calculer les statistiques
-      const stats = await Transaction.findAll({
-        where: { user_id: req.session.userId },
-        attributes: [
-          'type',
-          [Transaction.sequelize.fn('SUM', Transaction.sequelize.col('amount')), 'total']
-        ],
-        group: ['type'],
-        raw: true
-      });
-
-      const income = stats.find(s => s.type === 'income')?.total || 0;
-      const expense = stats.find(s => s.type === 'expense')?.total || 0;
-      const balance = parseFloat(income) - parseFloat(expense);
+      // Calculer les vraies statistiques
+      const stats = await budgetController.calculateStats(req.session.userId);
 
       res.render('transactions/index', {
         title: 'Mes Transactions',
         transactions,
-        stats: { income, expense, balance },
+        stats,
         user: req.user
       });
     } catch (error) {

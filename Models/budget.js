@@ -15,15 +15,34 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Budget.init({
-    user_id: { type: DataTypes.INTEGER, allowNull: false },
-    category_id: { type: DataTypes.INTEGER, allowNull: true },
-    name: { type: DataTypes.STRING, allowNull: false },
-    total_amount: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
-    month_year: { type: DataTypes.STRING }
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
+    },
+    initial_balance: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      defaultValue: 0.00,
+    },
+    current_date: {
+      type: DataTypes.DATEONLY,
+      allowNull: false
+    }
   }, {
     sequelize,
     modelName: 'Budget',
-    tableName: 'budgets'
+    tableName: 'budgets',
+    timestamps: true
   });
   return Budget;
 };
