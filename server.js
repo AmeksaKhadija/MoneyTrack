@@ -140,7 +140,13 @@ app.get("/transactions/:id/edit", requireAuth, transactionController.edit);
 app.post("/transactions/:id/update", requireAuth, transactionController.update);
 app.post("/transactions/:id/delete", requireAuth, transactionController.destroy);
 
-
+// statistiques
+app.get("/statistics", requireAuth, (req, res) => {
+  res.render('statistics', {
+    title: 'Statistiques',
+    user: req.user
+  });
+});
 // Protected Routes
 app.get("/dashboard", requireAuth, async (req, res) => {
   try {
