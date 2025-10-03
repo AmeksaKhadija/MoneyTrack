@@ -8,6 +8,9 @@ const transactionController = require("./Controllers/transactionController");
 const { User } = require("./models"); // Make sure path is correct
 const authController = require("./Controllers/authController");
 const budgetController = require("./Controllers/budgetController");
+const savingController = require("./Controllers/savingController");
+
+const { log } = require("console");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -111,6 +114,15 @@ app.get("/budget/setup", requireAuth, budgetController.setup);
 app.post("/budget/setup", requireAuth, budgetController.store);
 app.get("/budget/edit", requireAuth, budgetController.edit);
 app.post("/budget/update", requireAuth, budgetController.update);
+
+// saviengs
+//////////////////////////////////////////////
+app.get("/savings", requireAuth, budgetController.checkBudget, savingController.index);
+app.get("/savings/create", requireAuth, budgetController.checkBudget, savingController.create);
+app.post("/savings", requireAuth, budgetController.checkBudget, savingController.store);
+app.post("/savings/:id/add", requireAuth, budgetController.checkBudget, savingController.addMoney);
+app.post("/savings/:id/withdraw", requireAuth, budgetController.checkBudget, savingController.withdrawMoney);
+app.post("/savings/:id/delete", requireAuth, budgetController.checkBudget, savingController.destroy);
 
 // categories Routes (toutes protégées)
 app.get("/categories", requireAuth, categoryController.index);

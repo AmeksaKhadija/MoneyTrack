@@ -70,6 +70,28 @@ const transactionController = {
         });
       }
 
+
+      // Vérifier le solde si c'est une dépense
+      if (type === 'expense') {
+        const stats = await budgetController.calculateStats(req.session.userId);
+        const transactionAmount = parseFloat(amount);
+        
+        if (stats.currentBalance < transactionAmount) {
+          const categories = await Category.findAll({
+            where: { user_id: req.session.userId },
+            order: [['category_name', 'ASC']]
+          });
+
+          return res.render('transactions/create', {
+            title: 'Nouvelle Transaction',
+            categories,
+            error: `Solde insuffisant ! Votre solde actuel est de €${stats.currentBalance.toFixed(2)}, mais vous essayez de dépenser €${transactionAmount.toFixed(2)}`,
+            user: req.user
+          });
+        }
+      }
+
+      
       await Transaction.create({
         user_id: req.session.userId,
         type,

@@ -12,36 +12,36 @@
         </div>
         <div class="card-body p-4">
           <% if (error) { %>
-            <div class="alert alert-danger" role="alert">
-              <%= error %>
-            </div>
+          <div class="alert alert-danger" role="alert"><%= error %></div>
           <% } %>
 
           <div class="alert alert-warning mb-4">
-            <strong>⚠️ Attention :</strong> La modification du solde initial affectera votre solde actuel.
+            <strong>⚠️ Attention :</strong> La modification du solde initial
+            affectera votre solde actuel.
           </div>
 
           <form action="/budget/update" method="POST">
             <div class="mb-4">
               <label for="initial_balance" class="form-label fw-medium">
-                Solde Initial (€) <span class="text-danger">*</span>
+                Solde Initial (DH) <span class="text-danger">*</span>
               </label>
               <div class="input-group input-group-lg">
-                <span class="input-group-text">€</span>
-                <input 
-                  type="number" 
-                  class="form-control" 
-                  id="initial_balance" 
+                <span class="input-group-text">DH</span>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="initial_balance"
                   name="initial_balance"
                   value="<%= budget.initial_balance %>"
                   step="0.01"
                   min="0"
                   required
                   autofocus
-                >
+                />
               </div>
               <div class="form-text">
-                Solde de départ défini le <%= new Date(budget.created_at).toLocaleDateString('fr-FR') %>
+                Solde de départ défini le <%= new
+                Date(budget.created_at).toLocaleDateString('fr-FR') %>
               </div>
             </div>
 

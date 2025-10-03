@@ -19,49 +19,49 @@
               <div class="d-flex justify-content-between">
                 <div>
                   <h6 class="card-title mb-0">Solde Total</h6>
-                  <h3 class="mb-0">€2,450.00</h3>
+                  <h3 class="mb-0">DH2,450.00</h3>
                 </div>
                 <div class="fs-1">💰</div>
               </div>
             </div>
           </div>
         </div>
-        
+
         <div class="col-md-3 mb-3">
           <div class="card border-0 bg-success text-white">
             <div class="card-body">
               <div class="d-flex justify-content-between">
                 <div>
                   <h6 class="card-title mb-0">Revenus ce mois</h6>
-                  <h3 class="mb-0">€3,200.00</h3>
+                  <h3 class="mb-0">DH3,200.00</h3>
                 </div>
                 <div class="fs-1">📈</div>
               </div>
             </div>
           </div>
         </div>
-        
+
         <div class="col-md-3 mb-3">
           <div class="card border-0 bg-warning text-white">
             <div class="card-body">
               <div class="d-flex justify-content-between">
                 <div>
                   <h6 class="card-title mb-0">Dépenses ce mois</h6>
-                  <h3 class="mb-0">€750.00</h3>
+                  <h3 class="mb-0">DH750.00</h3>
                 </div>
                 <div class="fs-1">📊</div>
               </div>
             </div>
           </div>
         </div>
-        
+
         <div class="col-md-3 mb-3">
           <div class="card border-0 bg-info text-white">
             <div class="card-body">
               <div class="d-flex justify-content-between">
                 <div>
                   <h6 class="card-title mb-0">Objectif d'épargne</h6>
-                  <h3 class="mb-0">€5,000.00</h3>
+                  <h3 class="mb-0">DH5,000.00</h3>
                 </div>
                 <div class="fs-1">🎯</div>
               </div>
@@ -80,14 +80,19 @@
             <div class="card-body">
               <div class="alert alert-info">
                 <h6 class="alert-heading">Bienvenue sur MoneyTrack!</h6>
-                <p class="mb-0">Votre compte a été créé avec succès. Commencez par ajouter vos premières transactions pour voir vos statistiques financières.</p>
+                <p class="mb-0">
+                  Votre compte a été créé avec succès. Commencez par ajouter vos
+                  premières transactions pour voir vos statistiques financières.
+                </p>
               </div>
-              
+
               <!-- Placeholder for transactions -->
               <div class="text-center py-5 text-muted">
                 <div class="fs-1 mb-3">📋</div>
                 <h6>Aucune transaction pour le moment</h6>
-                <p class="small">Ajoutez votre première transaction pour commencer</p>
+                <p class="small">
+                  Ajoutez votre première transaction pour commencer
+                </p>
                 <button class="btn btn-primary btn-sm">
                   <span class="me-2">+</span>Ajouter une transaction
                 </button>
@@ -115,6 +120,12 @@
                 <a href="/categories/create" class="btn btn-outline-success">
                   <span class="me-2">📊</span>Créer une catégorie
                 </a>
+                <a href="/budget/edit" class="btn btn-outline-warning">
+                  <span class="me-2">💰</span>Modifier le Budget
+                </a>
+                <a href="/savings" class="btn btn-outline-info">
+                  <span class="me-2">🎯</span>Mes Épargnes
+                </a>
               </div>
             </div>
           </div>
@@ -132,12 +143,10 @@
                   <strong>Email:</strong> <%= user.email %>
                 </div>
                 <div class="mb-2">
-                  <strong>Statut:</strong> 
+                  <strong>Statut:</strong>
                   <span class="badge bg-success">Actif</span>
                 </div>
-                <div>
-                  <strong>Membre depuis:</strong> Aujourd'hui
-                </div>
+                <div><strong>Membre depuis:</strong> Aujourd'hui</div>
               </div>
             </div>
           </div>
@@ -148,15 +157,14 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     // Animation for cards
-    const cards = document.querySelectorAll('.card');
+    const cards = document.querySelectorAll(".card");
     cards.forEach((card, index) => {
       setTimeout(() => {
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0)';
+        card.style.opacity = "1";
+        card.style.transform = "translateY(0)";
       }, index * 100);
     });
   });
 </script>
-            
