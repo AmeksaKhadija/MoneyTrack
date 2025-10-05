@@ -23,6 +23,8 @@ const statisticsController = {
 
             stats.totalTransactions = transactionCounts.reduce((sum, t) => sum + parseInt(t.count), 0);
             stats.incomeCount = transactionCounts.find(t => t.type === 'income')?.count || 0;
+            console.log(stats.incomeCount);
+
             stats.expenseCount = transactionCounts.find(t => t.type === 'expense')?.count || 0;
 
             // 3. Données mensuelles (6 derniers mois)
@@ -109,21 +111,6 @@ const statisticsController = {
                     });
                 }
             });
-
-            // Ajouter "Sans catégorie" si nécessaire
-            if (noCategory.length > 0) {
-                noCategory.forEach(nc => {
-                    categoryStats.push({
-                        id: null,
-                        name: 'Sans catégorie',
-                        type: nc.type,
-                        color: '#6c757d',
-                        icon: '📋',
-                        count: parseInt(nc.count),
-                        total: parseFloat(nc.total)
-                    });
-                });
-            }
 
             // Calculer les pourcentages
             const totalAmount = categoryStats.reduce((sum, c) => sum + c.total, 0);

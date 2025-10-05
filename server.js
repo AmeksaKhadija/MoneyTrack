@@ -107,7 +107,6 @@ app.get("/login", requireGuest, authController.showLogin);
 app.post("/login", requireGuest, authController.login);
 
 // Demo login route
-app.post("/demo-login", requireGuest, authController.demoLogin);
 app.post("/logout", authController.logout);
 
 //  budget 

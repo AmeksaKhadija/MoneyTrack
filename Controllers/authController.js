@@ -178,41 +178,8 @@ const authController = {
       res.clearCookie('connect.sid');
       res.redirect('/');
     });
-  },
-
-
-  demoLogin: async (req, res) => {
-    try {
-      let demoUser = await User.findOne({ where: { email: 'demo@moneytrack.com' } });
-
-      if (!demoUser) {
-        const hashedPassword = await bcrypt.hash('demo123', 12);
-        demoUser = await User.create({
-          username: 'Utilisateur Démo',
-          email: 'demo@moneytrack.com',
-          password: hashedPassword
-        });
-        console.log('Demo user created');
-      }
-
-      req.session.userId = demoUser.id;
-      req.session.userEmail = demoUser.email;
-      req.session.userName = demoUser.username;
-
-      console.log('Demo user logged in');
-
-      res.redirect('/dashboard');
-
-    } catch (error) {
-      console.error('Demo login error:', error);
-      res.render('login', {
-        title: 'Connexion - MoneyTrack',
-        error: 'Erreur lors de la connexion avec le compte démo',
-        success: null,
-        user: null
-      });
-    }
   }
+
 };
 
 module.exports = authController;
