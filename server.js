@@ -9,6 +9,7 @@ const { User } = require("./models"); // Make sure path is correct
 const authController = require("./Controllers/authController");
 const budgetController = require("./Controllers/budgetController");
 const savingController = require("./Controllers/savingController");
+const statisticsController = require("./Controllers/statisticsController");
 
 const { log } = require("console");
 
@@ -141,12 +142,13 @@ app.post("/transactions/:id/update", requireAuth, transactionController.update);
 app.post("/transactions/:id/delete", requireAuth, transactionController.destroy);
 
 // statistiques
-app.get("/statistics", requireAuth, (req, res) => {
-  res.render('statistics', {
-    title: 'Statistiques',
-    user: req.user
-  });
-});
+app.get("/statistics", requireAuth, budgetController.checkBudget, statisticsController.index);
+// app.get("/statistics", requireAuth, (req, res) => {
+//   res.render('statistics', {
+//     title: 'Statistiques',
+//     user: req.user
+//   });
+// });
 // Protected Routes
 app.get("/dashboard", requireAuth, async (req, res) => {
   try {
@@ -162,24 +164,6 @@ app.get("/dashboard", requireAuth, async (req, res) => {
     console.error("Dashboard error:", error);
     res.redirect("/login");
   }
-});
-
-// API Routes
-app.get("/api/user", requireAuth, async (req, res) => {
-  try {
-    const user = await User.findByPk(req.session.userId, {
-      attributes: ['id', 'username', 'email']
-    });
-    res.json(user);
-  } catch (error) {
-    console.error("API user error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Health check
-app.get("/health", (req, res) => {
-  res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
 // 404 Handler
