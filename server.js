@@ -1,11 +1,11 @@
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
-const bcrypt = require("bcrypt"); // Uncomment this
+const bcrypt = require("bcrypt");
 const expressLayouts = require("express-ejs-layouts");
+const { User } = require("./models");
 const categoryController = require("./Controllers/categoryController");
 const transactionController = require("./Controllers/transactionController");
-const { User } = require("./models"); // Make sure path is correct
 const authController = require("./Controllers/authController");
 const budgetController = require("./Controllers/budgetController");
 const savingController = require("./Controllers/savingController");
@@ -16,51 +16,43 @@ const { log } = require("console");
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// EJS Configuration
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Layouts Configuration
 app.use(expressLayouts);
 app.set("layout", "layout");
 
-// Static Files
 const publicPath = path.join(__dirname, "./public");
 app.use(express.static(publicPath));
 
-// Body Parsing Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Session Configuration
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "moneytrack-secret-key-change-in-production",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // Set to true if using HTTPS
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      secure: false,
+      maxAge: 24 * 60 * 60 * 1000
     },
   })
 );
 
-// Authentication Middleware
 const requireAuth = async (req, res, next) => {
   if (!req.session.userId) {
     return res.redirect("/login");
   }
 
   try {
-    // Verify user still exists in database
     const user = await User.findByPk(req.session.userId);
     if (!user) {
-      // User deleted, clear session
       req.session.destroy();
       return res.redirect("/login");
     }
 
-    // Add user to request object for easy access
     req.user = user;
     next();
   } catch (error) {
@@ -69,7 +61,6 @@ const requireAuth = async (req, res, next) => {
   }
 };
 
-// Guest middleware (redirect to dashboard if logged in)
 const requireGuest = (req, res, next) => {
   if (req.session.userId) {
     return res.redirect("/dashboard");
@@ -86,7 +77,7 @@ app.get("/", async (req, res) => {
   if (req.session.userId) {
     try {
       user = await User.findByPk(req.session.userId, {
-        attributes: ['id', 'username', 'email'] // Don't send password
+        attributes: ['id', 'username', 'email']
       });
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -99,14 +90,13 @@ app.get("/", async (req, res) => {
   });
 });
 
-// Authentication Routes using controller
+// Authentication 
 app.get("/register", requireGuest, authController.showRegister);
 app.post("/register", requireGuest, authController.register);
 
 app.get("/login", requireGuest, authController.showLogin);
 app.post("/login", requireGuest, authController.login);
 
-// Demo login route
 app.post("/logout", authController.logout);
 
 //  budget 
@@ -142,12 +132,7 @@ app.post("/transactions/:id/delete", requireAuth, transactionController.destroy)
 
 // statistiques
 app.get("/statistics", requireAuth, budgetController.checkBudget, statisticsController.index);
-// app.get("/statistics", requireAuth, (req, res) => {
-//   res.render('statistics', {
-//     title: 'Statistiques',
-//     user: req.user
-//   });
-// });
+
 // Protected Routes
 app.get("/dashboard", requireAuth, async (req, res) => {
   try {
