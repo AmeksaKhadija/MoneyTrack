@@ -2,7 +2,6 @@ const { Budget, Transaction } = require('../models');
 const { Op } = require('sequelize');
 
 const budgetController = {
-  // Vérifier si l'utilisateur a un budget initial
   checkBudget: async (req, res, next) => {
     try {
       const budget = await Budget.findOne({
