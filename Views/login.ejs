@@ -1,0 +1,238 @@
+<div class="form-container d-flex align-items-center justify-content-center min-vh-100 py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card form-card border-0 shadow-lg">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="text-center mb-4">
+                            <a href="/" class="text-decoration-none">
+                                <h2 class="fw-bold text-primary mb-3">MoneyTrack</h2>
+                            </a>
+                            <h1 class="h3 fw-semibold text-primary mb-2">Bon retour !</h1>
+                            <p class="text-muted">Connectez-vous à votre compte pour accéder à votre tableau de bord</p>
+                        </div>
+
+                        <!-- Success message -->
+                        <% if (typeof success !== 'undefined' && success) { %>
+                            <div class="alert alert-success" role="alert">
+                                <%= success %>
+                            </div>
+                        <% } %>
+
+                        <!-- Error message -->
+                        <% if (typeof error !== 'undefined' && error) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= error %>
+                            </div>
+                        <% } %>
+
+                        <form action="/login" method="POST" id="loginForm">
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-medium">Adresse email</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    class="form-control form-input" 
+                                    placeholder="votre@email.com"
+                                    required
+                                    autocomplete="email"
+                                    autofocus
+                                >
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-medium">Mot de passe</label>
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    class="form-control form-input" 
+                                    placeholder="Entrez votre mot de passe"
+                                    required
+                                    autocomplete="current-password"
+                                >
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                                    <label class="form-check-label text-muted small" for="remember">
+                                        Se souvenir de moi
+                                    </label>
+                                </div>
+                                <a href="#" class="text-primary text-decoration-none small" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                                    Mot de passe oublié ?
+                                </a>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" id="submitBtn">
+                                Se connecter
+                            </button>
+                        </form>
+
+                        <div class="text-center border-top pt-3 mb-4">
+                            <p class="text-muted mb-0">
+                                Vous n'avez pas encore de compte ? 
+                                <a href="/register" class="text-primary text-decoration-none fw-medium">Créer un compte</a>
+                            </p>
+                        </div>
+
+                        <!-- Demo credentials section -->
+                        <div class="border-top pt-4 mb-4">
+                            <h3 class="h6 fw-semibold text-primary mb-3 text-center">
+                                Accès rapide
+                            </h3>
+                            <p class="small text-muted text-center mb-3">
+                                Pour tester l'application, vous pouvez utiliser ces identifiants de démonstration :
+                            </p>
+                            <div class="bg-light p-3 rounded small">
+                                <div class="mb-1">
+                                    <strong>Email :</strong> demo@moneytrack.com
+                                </div>
+                                <div>
+                                    <strong>Mot de passe :</strong> demo123
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary w-100 mt-3" onclick="fillDemoCredentials()">
+                                Utiliser les identifiants de démonstration
+                            </button>
+
+                            <form action="/demo-login" method="POST" class="mt-2">
+                                <button type="submit" class="btn btn-info w-100">
+                                    Connexion directe (Démo)
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Benefits section -->
+                        <div class="border-top pt-4">
+                            <h3 class="h6 fw-semibold text-primary mb-3 text-center">
+                                Votre tableau de bord vous attend
+                            </h3>
+                            <ul class="list-unstyled mb-0">
+                                <li class="d-flex align-items-center mb-2 small text-muted">
+                                    <span class="text-primary fw-bold me-2">📊</span>
+                                    Visualisez vos dépenses en temps réel
+                                </li>
+                                <li class="d-flex align-items-center mb-2 small text-muted">
+                                    <span class="text-primary fw-bold me-2">💰</span>
+                                    Gérez vos budgets et objectifs
+                                </li>
+                                <li class="d-flex align-items-center mb-2 small text-muted">
+                                    <span class="text-primary fw-bold me-2">📈</span>
+                                    Suivez votre progression financière
+                                </li>
+                                <li class="d-flex align-items-center small text-muted">
+                                    <span class="text-primary fw-bold me-2">🎯</span>
+                                    Atteignez vos objectifs d'épargne
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-primary" id="forgotPasswordModalLabel">Réinitialiser le mot de passe</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-4">
+                    Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                </p>
+                <form id="forgotPasswordForm">
+                    <div class="mb-3">
+                        <label for="resetEmail" class="form-label fw-medium">Adresse email</label>
+                        <input type="email" id="resetEmail" class="form-control" placeholder="votre@email.com" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" form="forgotPasswordForm" class="btn btn-primary">Envoyer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Animation du bouton lors de la soumission
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', function(e) {
+        if (form.checkValidity()) {
+            submitBtn.innerHTML = 'Connexion en cours...';
+            submitBtn.disabled = true;
+        }
+    });
+
+    // Validation en temps réel
+    const inputs = document.querySelectorAll('.form-input');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.checkValidity()) {
+                this.style.borderColor = 'var(--success-color)';
+            } else {
+                this.style.borderColor = 'var(--danger-color)';
+            }
+        });
+
+        input.addEventListener('focus', function() {
+            this.style.borderColor = 'var(--accent-color)';
+        });
+    });
+
+    // Fonctions pour les identifiants de démonstration
+    function fillDemoCredentials() {
+        document.getElementById('email').value = 'demo@moneytrack.com';
+        document.getElementById('password').value = 'demo123';
+        
+        // Animation visuelle
+        const inputs = [document.getElementById('email'), document.getElementById('password')];
+        inputs.forEach(input => {
+            input.style.borderColor = 'var(--success-color)';
+            input.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                input.style.transform = 'scale(1)';
+            }, 200);
+        });
+    }
+
+    // Animation d'entrée
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('.form-card').classList.add('fade-in-up');
+        
+        // Auto-hide success message after 5 seconds
+        const successAlert = document.querySelector('.alert-success');
+        if (successAlert) {
+            setTimeout(() => {
+                successAlert.style.opacity = '0';
+                setTimeout(() => {
+                    successAlert.style.display = 'none';
+                }, 300);
+            }, 5000);
+        }
+    });
+
+    // Gestion du formulaire de réinitialisation avec Bootstrap modal
+    document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('resetEmail').value;
+        
+        // Simulation d'envoi d'email
+        alert(`Un email de réinitialisation a été envoyé à ${email}`);
+        
+        // Fermer le modal Bootstrap
+        const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+        modal.hide();
+    });
+</script>

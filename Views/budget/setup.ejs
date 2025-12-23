@@ -1,0 +1,72 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-lg">
+        <div class="card-body p-5 text-center">
+          <div class="mb-4">
+            <div class="fs-1 mb-3">💰</div>
+            <h2 class="h3 fw-bold text-primary mb-3">
+              Configuration du Budget Initial
+            </h2>
+            <p class="text-muted">
+              Avant de commencer à gérer vos transactions, définissez votre
+              solde de départ.
+            </p>
+          </div>
+
+          <% if (error) { %>
+          <div class="alert alert-danger text-start" role="alert">
+            <%= error %>
+          </div>
+          <% } %>
+
+          <form action="/budget/setup" method="POST" class="text-start">
+            <div class="mb-4">
+              <label for="initial_balance" class="form-label fw-medium">
+                Solde Initial (DH) <span class="text-danger">*</span>
+              </label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text">DH</span>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="initial_balance"
+                  name="initial_balance"
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0"
+                  required
+                  autofocus
+                />
+              </div>
+              <div class="form-text">
+                Entrez le montant dont vous disposez actuellement (compte
+                bancaire, espèces, etc.)
+              </div>
+            </div>
+
+            <div class="alert alert-info">
+              <small>
+                <strong>💡 Astuce :</strong> Ce solde initial servira de point
+                de départ. Toutes vos transactions (revenus et dépenses) seront
+                ajoutées ou soustraites de ce montant.
+              </small>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+              <button type="submit" class="btn btn-primary btn-lg">
+                Valider et Continuer
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <small class="text-muted">
+          Vous pourrez modifier ce montant plus tard si nécessaire
+        </small>
+      </div>
+    </div>
+  </div>
+</div>

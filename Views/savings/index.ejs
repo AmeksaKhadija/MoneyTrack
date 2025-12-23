@@ -1,0 +1,271 @@
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="h3 mb-0">Mes Épargnes</h1>
+          <p class="text-muted">Gérez vos objectifs d'épargne</p>
+        </div>
+        <a href="/savings/create" class="btn btn-primary">
+          <span class="me-2">+</span>Nouvel Objectif
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages de succès/erreur -->
+  <% if (typeof session !== 'undefined' && session) { %> <% if (typeof
+  savingSuccess !== 'undefined' && savingSuccess) { %>
+  <div class="alert alert-success alert-dismissible fade show">
+    <%= savingSuccess %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %> <% if (typeof savingError !== 'undefined' && savingError) { %>
+  <div class="alert alert-danger alert-dismissible fade show">
+    <%= savingError %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %> <% } %>
+
+  <!-- Statistiques -->
+  <div class="row mb-4">
+    <div class="col-md-3 mb-3">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Solde Disponible</h6>
+          <h3 class="mb-0 text-primary">
+            DH<%= parseFloat(stats.currentBalance).toFixed(2) %>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card border-0 shadow-sm bg-success text-white">
+        <div class="card-body">
+          <h6 class="opacity-75 mb-1">Total Épargné</h6>
+          <h3 class="mb-0">DH<%= parseFloat(totalSaved).toFixed(2) %></h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card border-0 shadow-sm bg-info text-white">
+        <div class="card-body">
+          <h6 class="opacity-75 mb-1">Objectifs Totaux</h6>
+          <h3 class="mb-0">DH<%= parseFloat(totalGoals).toFixed(2) %></h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card border-0 shadow-sm bg-warning text-white">
+        <div class="card-body">
+          <h6 class="opacity-75 mb-1">Restant à Épargner</h6>
+          <h3 class="mb-0">
+            DH<%= parseFloat(totalGoals - totalSaved).toFixed(2) %>
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des épargnes -->
+  <div class="row">
+    <% if (savings.length === 0) { %>
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+          <div class="fs-1 mb-3">🎯</div>
+          <h5>Aucun objectif d'épargne</h5>
+          <p class="text-muted mb-3">
+            Commencez par créer votre premier objectif d'épargne
+          </p>
+          <a href="/savings/create" class="btn btn-primary">
+            Créer un Objectif
+          </a>
+        </div>
+      </div>
+    </div>
+    <% } else { %> <% savings.forEach(saving => { %> <% const progress =
+    (parseFloat(saving.saved_amount) / parseFloat(saving.goal_amount)) * 100; %>
+    <% const isCompleted = progress >= 100; %>
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h5 class="card-title mb-1"><%= saving.goal_name %></h5>
+              <% if (saving.target_date) { %>
+              <small class="text-muted">
+                Objectif: <%= new
+                Date(saving.target_date).toLocaleDateString('fr-FR') %>
+              </small>
+              <% } %>
+            </div>
+            <% if (isCompleted) { %>
+            <span class="badge bg-success">Atteint !</span>
+            <% } %>
+          </div>
+
+          <% if (saving.description) { %>
+          <p class="text-muted small mb-3"><%= saving.description %></p>
+          <% } %>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="fw-bold text-success"
+                >DH<%= parseFloat(saving.saved_amount).toFixed(2) %></span
+              >
+              <span class="text-muted"
+                >/ DH<%= parseFloat(saving.goal_amount).toFixed(2) %></span
+              >
+            </div>
+            <div class="progress" style="height: 20px">
+              <div
+                class="progress-bar <%= isCompleted ? 'bg-success' : 'bg-primary' %>"
+                style="width: <%= Math.min(progress, 100) %>%"
+              >
+                <%= Math.round(progress) %>%
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-2">
+            <% if (!isCompleted) { %>
+            <div class="col-12">
+              <button
+                class="btn btn-sm btn-success w-100"
+                data-bs-toggle="modal"
+                data-bs-target="#addMoneyModal<%= saving.id %>"
+              >
+                💰 Ajouter de l'argent
+              </button>
+            </div>
+            <% } %> <% if (parseFloat(saving.saved_amount) > 0) { %>
+            <div class="col-6">
+              <button
+                class="btn btn-sm btn-outline-warning w-100"
+                data-bs-toggle="modal"
+                data-bs-target="#withdrawModal<%= saving.id %>"
+              >
+                Retirer
+              </button>
+            </div>
+            <% } %>
+            <div
+              class="col-<%= parseFloat(saving.saved_amount) > 0 ? '6' : '12' %>"
+            >
+              <form
+                action="/savings/<%= saving.id %>/delete"
+                method="POST"
+                onsubmit="return confirm('Êtes-vous sûr ?')"
+              >
+                <button
+                  type="submit"
+                  class="btn btn-sm btn-outline-danger w-100"
+                >
+                  Supprimer
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Ajouter argent -->
+      <div class="modal fade" id="addMoneyModal<%= saving.id %>" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Ajouter à "<%= saving.goal_name %>"</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <form action="/savings/<%= saving.id %>/add" method="POST">
+              <div class="modal-body">
+                <p class="text-muted">
+                  Solde disponible: DH<%=
+                  parseFloat(stats.currentBalance).toFixed(2) %>
+                </p>
+                <p class="text-muted">
+                  Restant à épargner: DH<%= (parseFloat(saving.goal_amount) -
+                  parseFloat(saving.saved_amount)).toFixed(2) %>
+                </p>
+                <div class="mb-3">
+                  <label class="form-label">Montant (DH)</label>
+                  <input
+                    type="number"
+                    name="amount"
+                    class="form-control"
+                    step="0.01"
+                    min="0.01"
+                    max="<%= Math.min(stats.currentBalance, parseFloat(saving.goal_amount) - parseFloat(saving.saved_amount)) %>"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Annuler
+                </button>
+                <button type="submit" class="btn btn-success">Ajouter</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Retirer argent -->
+      <div class="modal fade" id="withdrawModal<%= saving.id %>" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Retirer de "<%= saving.goal_name %>"</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <form action="/savings/<%= saving.id %>/withdraw" method="POST">
+              <div class="modal-body">
+                <p class="text-muted">
+                  Montant épargné: DH<%=
+                  parseFloat(saving.saved_amount).toFixed(2) %>
+                </p>
+                <div class="mb-3">
+                  <label class="form-label">Montant à retirer (DH)</label>
+                  <input
+                    type="number"
+                    name="amount"
+                    class="form-control"
+                    step="0.01"
+                    min="0.01"
+                    max="<%= parseFloat(saving.saved_amount) %>"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Annuler
+                </button>
+                <button type="submit" class="btn btn-warning">Retirer</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }); %> <% } %>
+  </div>
+</div>

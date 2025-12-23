@@ -1,0 +1,182 @@
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="h3 mb-0">Mes Catégories</h1>
+          <p class="text-muted">Gérez vos catégories de revenus et dépenses</p>
+        </div>
+        <a href="/categories/create" class="btn btn-primary">
+          <span class="me-2">+</span>Nouvelle Catégorie
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Catégories de Dépenses -->
+    <div class="col-md-6 mb-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="card-title mb-0 text-danger">
+            <span class="me-2">📤</span>Catégories de Dépenses
+          </h5>
+        </div>
+        <div class="card-body">
+          <% const expenseCategories = categories.filter(c => c.type ===
+          'expense'); %> <% if (expenseCategories.length === 0) { %>
+          <div class="text-center py-4 text-muted">
+            <p class="mb-0">Aucune catégorie de dépenses</p>
+          </div>
+          <% } else { %>
+          <div class="list-group list-group-flush">
+            <% expenseCategories.forEach(category => { %>
+            <div
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              <div class="d-flex align-items-center">
+                <span
+                  class="badge rounded-circle me-3"
+                  style="
+                    background-color: <%= category.color %>;
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <%= category.icon || '📁' %>
+                </span>
+                <div>
+                  <h6 class="mb-0"><%= category.category_name %></h6>
+                  <small class="text-muted">
+                    Créée le <%= new
+                    Date(category.created_at).toLocaleDateString('fr-FR') %>
+                  </small>
+                </div>
+              </div>
+              <div class="btn-group">
+                <a
+                  href="/categories/<%= category.id %>/edit"
+                  class="btn btn-sm btn-outline-primary"
+                >
+                  Modifier
+                </a>
+                <form
+                  action="/categories/<%= category.id %>/delete"
+                  method="POST"
+                  class="d-inline"
+                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')"
+                >
+                  <button type="submit" class="btn btn-sm btn-outline-danger">
+                    Supprimer
+                  </button>
+                </form>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catégories de Revenus -->
+    <div class="col-md-6 mb-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="card-title mb-0 text-success">
+            <span class="me-2">📥</span>Catégories de Revenus
+          </h5>
+        </div>
+        <div class="card-body">
+          <% const incomeCategories = categories.filter(c => c.type ===
+          'income'); %> <% if (incomeCategories.length === 0) { %>
+          <div class="text-center py-4 text-muted">
+            <p class="mb-0">Aucune catégorie de revenus</p>
+          </div>
+          <% } else { %>
+          <div class="list-group list-group-flush">
+            <% incomeCategories.forEach(category => { %>
+            <div
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              <div class="d-flex align-items-center">
+                <span
+                  class="badge rounded-circle me-3"
+                  style="
+                    background-color: <%= category.color %>;
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <%= category.icon || '📁' %>
+                </span>
+                <div>
+                  <h6 class="mb-0"><%= category.category_name %></h6>
+                  <small class="text-muted">
+                    Créée le <%= new
+                    Date(category.created_at).toLocaleDateString('fr-FR') %>
+                  </small>
+                </div>
+              </div>
+              <div class="btn-group">
+                <a
+                  href="/categories/<%= category.id %>/edit"
+                  class="btn btn-sm btn-outline-primary"
+                >
+                  Modifier
+                </a>
+                <form
+                  action="/categories/<%= category.id %>/delete"
+                  method="POST"
+                  class="d-inline"
+                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')"
+                >
+                  <button type="submit" class="btn btn-sm btn-outline-danger">
+                    Supprimer
+                  </button>
+                </form>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-md-3">
+              <h3 class="text-primary"><%= categories.length %></h3>
+              <p class="text-muted mb-0">Total Catégories</p>
+            </div>
+            <div class="col-md-3">
+              <h3 class="text-danger"><%= expenseCategories.length %></h3>
+              <p class="text-muted mb-0">Dépenses</p>
+            </div>
+            <div class="col-md-3">
+              <h3 class="text-success"><%= incomeCategories.length %></h3>
+              <p class="text-muted mb-0">Revenus</p>
+            </div>
+            <div class="col-md-3">
+              <a href="/transactions" class="btn btn-outline-primary">
+                Voir les Transactions
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,127 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Modifier la Catégorie</h4>
+            <a href="/categories" class="btn btn-sm btn-outline-secondary">
+              ← Retour
+            </a>
+          </div>
+        </div>
+        <div class="card-body p-4">
+          <% if (error) { %>
+            <div class="alert alert-danger" role="alert">
+              <%= error %>
+            </div>
+          <% } %>
+
+          <form action="/categories/<%= category.id %>/update" method="POST">
+            <div class="mb-4">
+              <label for="category_name" class="form-label fw-medium">
+                Nom de la catégorie <span class="text-danger">*</span>
+              </label>
+              <input 
+                type="text" 
+                class="form-control form-control-lg" 
+                id="category_name" 
+                name="category_name"
+                value="<%= category.category_name %>"
+                required
+                autofocus
+              >
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-medium">
+                Type <span class="text-danger">*</span>
+              </label>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <input type="radio" class="btn-check" name="type" id="expense" value="expense" 
+                         <%= category.type === 'expense' ? 'checked' : '' %>>
+                  <label class="btn btn-outline-danger w-100 py-3" for="expense">
+                    <div class="fs-3 mb-2">📤</div>
+                    <div class="fw-semibold">Dépense</div>
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <input type="radio" class="btn-check" name="type" id="income" value="income"
+                         <%= category.type === 'income' ? 'checked' : '' %>>
+                  <label class="btn btn-outline-success w-100 py-3" for="income">
+                    <div class="fs-3 mb-2">📥</div>
+                    <div class="fw-semibold">Revenu</div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="icon" class="form-label fw-medium">
+                Icône (emoji)
+              </label>
+              <div class="input-group">
+                <span class="input-group-text fs-4" id="iconPreview"><%= category.icon || '📁' %></span>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="icon" 
+                  name="icon"
+                  value="<%= category.icon || '' %>"
+                  placeholder="Choisissez un emoji..."
+                  maxlength="2"
+                  oninput="document.getElementById('iconPreview').textContent = this.value || '📁'"
+                >
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="color" class="form-label fw-medium">
+                Couleur
+              </label>
+              <div class="row g-2">
+                <div class="col-auto">
+                  <input 
+                    type="color" 
+                    class="form-control form-control-color" 
+                    id="color" 
+                    name="color"
+                    value="<%= category.color || '#3b82f6' %>"
+                  >
+                </div>
+                <div class="col">
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="colorHex"
+                    value="<%= category.color || '#3b82f6' %>"
+                    readonly
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">
+                Enregistrer les Modifications
+              </button>
+              <a href="/categories" class="btn btn-outline-secondary">
+                Annuler
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const colorPicker = document.getElementById('color');
+  const colorHex = document.getElementById('colorHex');
+  
+  colorPicker.addEventListener('input', function() {
+    colorHex.value = this.value;
+  });
+</script>

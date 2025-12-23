@@ -1,0 +1,413 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <!-- En-tête -->
+      <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="h3 mb-1">Créer un Objectif d'Épargne</h1>
+            <p class="text-muted mb-0">
+              Définissez vos objectifs financiers et suivez votre progression
+            </p>
+          </div>
+          <a href="/savings" class="btn btn-outline-secondary">
+            <span class="me-2">←</span>Retour
+          </a>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Formulaire principal -->
+        <div class="col-lg-8 mb-4">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <% if (error) { %>
+              <div
+                class="alert alert-danger alert-dismissible fade show"
+                role="alert"
+              >
+                <strong>Erreur !</strong> <%= error %>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="alert"
+                ></button>
+              </div>
+              <% } %>
+
+              <form action="/savings" method="POST" id="savingForm">
+                <!-- Nom de l'objectif -->
+                <div class="mb-4">
+                  <label for="goal_name" class="form-label fw-medium">
+                    <span class="me-2">🎯</span>Nom de l'Objectif
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control form-control-lg"
+                    id="goal_name"
+                    name="goal_name"
+                    placeholder="Ex: Vacances d'été, Nouvelle voiture, Fonds d'urgence..."
+                    required
+                    autofocus
+                    maxlength="100"
+                  />
+                  <div class="form-text">
+                    Donnez un nom clair à votre objectif d'épargne
+                  </div>
+                </div>
+
+                <!-- Montant objectif -->
+                <div class="mb-4">
+                  <label for="goal_amount" class="form-label fw-medium">
+                    <span class="me-2">💵</span>Montant Objectif (DH)
+                    <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group input-group-lg">
+                    <span class="input-group-text">DH</span>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="goal_amount"
+                      name="goal_amount"
+                      placeholder="0.00"
+                      step="0.01"
+                      min="0.01"
+                      max="999999.99"
+                      required
+                      oninput="updatePreview()"
+                    />
+                  </div>
+                  <div class="form-text">
+                    Combien souhaitez-vous économiser au total ?
+                  </div>
+                </div>
+
+                <!-- Date cible -->
+                <div class="mb-4">
+                  <label for="target_date" class="form-label fw-medium">
+                    <span class="me-2">📅</span>Date Cible (optionnel)
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control form-control-lg"
+                    id="target_date"
+                    name="target_date"
+                    min="<%= new Date().toISOString().split('T')[0] %>"
+                    onchange="calculateMonthlyTarget()"
+                  />
+                  <div class="form-text">
+                    Fixez une échéance pour atteindre votre objectif
+                  </div>
+                  <div id="monthlyTarget" class="mt-2" style="display: none">
+                    <div class="alert alert-info mb-0">
+                      <small
+                        ><strong>Suggestion :</strong> Pour atteindre votre
+                        objectif, économisez environ
+                        <strong id="monthlyAmount">0DH</strong> par mois.</small
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                  <label for="description" class="form-label fw-medium">
+                    <span class="me-2">📝</span>Description (optionnel)
+                  </label>
+                  <textarea
+                    class="form-control"
+                    id="description"
+                    name="description"
+                    rows="4"
+                    maxlength="500"
+                    placeholder="Pourquoi cet objectif est-il important pour vous ? Ajoutez des détails pour rester motivé..."
+                  ></textarea>
+                  <div class="form-text d-flex justify-content-between">
+                    <span>Décrivez votre objectif pour vous motiver</span>
+                    <span id="charCount">0/500</span>
+                  </div>
+                </div>
+
+                <!-- Aperçu -->
+                <div
+                  id="preview"
+                  class="alert alert-light border mb-4"
+                  style="display: none"
+                >
+                  <h6 class="fw-bold mb-3">Aperçu de votre objectif</h6>
+                  <div class="row g-3">
+                    <div class="col-6">
+                      <div class="text-muted small">Objectif</div>
+                      <div class="fw-bold" id="previewName">-</div>
+                    </div>
+                    <div class="col-6">
+                      <div class="text-muted small">Montant</div>
+                      <div class="fw-bold text-success" id="previewAmount">
+                        DH0.00
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Boutons -->
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary btn-lg">
+                    <span class="me-2">✓</span>Créer l'Objectif d'Épargne
+                  </button>
+                  <a href="/savings" class="btn btn-outline-secondary">
+                    Annuler
+                  </a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Colonne droite - Aide et exemples -->
+        <div class="col-lg-4">
+          <!-- Guide -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+              <h6 class="fw-bold mb-3">Comment ça marche ?</h6>
+              <div class="d-flex mb-3">
+                <div class="me-3">
+                  <span
+                    class="badge bg-primary rounded-circle"
+                    style="
+                      width: 30px;
+                      height: 30px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >1</span
+                  >
+                </div>
+                <div>
+                  <div class="fw-medium small">Créez votre objectif</div>
+                  <div class="text-muted small">
+                    Définissez le montant et la date cible
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex mb-3">
+                <div class="me-3">
+                  <span
+                    class="badge bg-primary rounded-circle"
+                    style="
+                      width: 30px;
+                      height: 30px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >2</span
+                  >
+                </div>
+                <div>
+                  <div class="fw-medium small">Épargnez régulièrement</div>
+                  <div class="text-muted small">
+                    Ajoutez de l'argent depuis votre solde
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex mb-3">
+                <div class="me-3">
+                  <span
+                    class="badge bg-primary rounded-circle"
+                    style="
+                      width: 30px;
+                      height: 30px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >3</span
+                  >
+                </div>
+                <div>
+                  <div class="fw-medium small">Suivez votre progression</div>
+                  <div class="text-muted small">
+                    Visualisez vos progrès en temps réel
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex">
+                <div class="me-3">
+                  <span
+                    class="badge bg-success rounded-circle"
+                    style="
+                      width: 30px;
+                      height: 30px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >✓</span
+                  >
+                </div>
+                <div>
+                  <div class="fw-medium small">Atteignez votre objectif</div>
+                  <div class="text-muted small">Réalisez vos projets !</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exemples d'objectifs -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+              <h6 class="fw-bold mb-3">Exemples d'objectifs</h6>
+              <div class="d-grid gap-2">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary text-start"
+                  onclick="fillExample('Fonds d\'urgence', '3000', 'Pour faire face aux imprévus et avoir 3 mois de dépenses de côté')"
+                >
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>🚨 Fonds d'urgence</span>
+                    <span class="badge bg-primary">3000DH</span>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary text-start"
+                  onclick="fillExample('Vacances d\'été 2026', '1500', 'Voyage de rêve en Grèce avec toute la famille')"
+                >
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>✈️ Vacances d'été</span>
+                    <span class="badge bg-primary">1500DH</span>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary text-start"
+                  onclick="fillExample('Nouvelle voiture', '15000', 'Achat d\'une voiture électrique pour réduire mes dépenses')"
+                >
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>🚗 Nouvelle voiture</span>
+                    <span class="badge bg-primary">15000DH</span>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary text-start"
+                  onclick="fillExample('Mariage', '10000', 'Le plus beau jour de notre vie')"
+                >
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>💍 Mariage</span>
+                    <span class="badge bg-primary">10000DH</span>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary text-start"
+                  onclick="fillExample('Ordinateur portable', '1200', 'Pour améliorer ma productivité au travail')"
+                >
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>💻 Ordinateur</span>
+                    <span class="badge bg-primary">1200DH</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conseils -->
+          <div class="card border-0 shadow-sm bg-light">
+            <div class="card-body">
+              <h6 class="fw-bold mb-3">💡 Conseils</h6>
+              <ul class="small mb-0 ps-3">
+                <li class="mb-2">
+                  Définissez des objectifs réalistes et atteignables
+                </li>
+                <li class="mb-2">
+                  Épargnez régulièrement, même de petits montants
+                </li>
+                <li class="mb-2">Priorisez un fonds d'urgence avant tout</li>
+                <li>Célébrez vos progrès pour rester motivé</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Remplir avec un exemple
+  function fillExample(name, amount, description) {
+    document.getElementById("goal_name").value = name;
+    document.getElementById("goal_amount").value = amount;
+    document.getElementById("description").value = description;
+    updatePreview();
+    calculateMonthlyTarget();
+    document.getElementById("goal_name").focus();
+  }
+
+  // Mise à jour de l'aperçu
+  function updatePreview() {
+    const name = document.getElementById("goal_name").value;
+    const amount = document.getElementById("goal_amount").value;
+    const preview = document.getElementById("preview");
+
+    if (name || amount) {
+      preview.style.display = "block";
+      document.getElementById("previewName").textContent =
+        name || "Mon objectif";
+      document.getElementById("previewAmount").textContent = amount
+        ? `DH${parseFloat(amount).toFixed(2)}`
+        : "DH0.00";
+    } else {
+      preview.style.display = "none";
+    }
+  }
+
+  // Calcul de l'épargne mensuelle suggérée
+  function calculateMonthlyTarget() {
+    const amount = parseFloat(document.getElementById("goal_amount").value);
+    const targetDate = document.getElementById("target_date").value;
+    const monthlyTarget = document.getElementById("monthlyTarget");
+
+    if (amount && targetDate) {
+      const today = new Date();
+      const target = new Date(targetDate);
+      const monthsDiff = Math.max(
+        1,
+        Math.round((target - today) / (1000 * 60 * 60 * 24 * 30))
+      );
+      const monthlyAmount = (amount / monthsDiff).toFixed(2);
+
+      document.getElementById(
+        "monthlyAmount"
+      ).textContent = `DH${monthlyAmount}`;
+      monthlyTarget.style.display = "block";
+    } else {
+      monthlyTarget.style.display = "none";
+    }
+  }
+
+  // Compteur de caractères pour la description
+  document.getElementById("description").addEventListener("input", function () {
+    const count = this.value.length;
+    document.getElementById("charCount").textContent = `${count}/500`;
+  });
+
+  // Écouteurs d'événements
+  document.getElementById("goal_name").addEventListener("input", updatePreview);
+  document
+    .getElementById("goal_amount")
+    .addEventListener("input", calculateMonthlyTarget);
+</script>
